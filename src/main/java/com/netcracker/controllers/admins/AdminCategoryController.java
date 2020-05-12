@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api/admin/")
+@RequestMapping(value = "api/admin/")
 public class AdminCategoryController {
 
     private final UserService userService;
@@ -25,13 +25,13 @@ public class AdminCategoryController {
     }
 
     @DeleteMapping(value = "deleteCategories")
-    public ResponseEntity<String> getCategories(@RequestBody(required = true) String ide){
+    public ResponseEntity<String> getCategories(@RequestBody String ide){
         Long id = Long.parseLong(ide);
 
         if(categoryService.findById(id)==null){
-            return new ResponseEntity<String>("Category with id="+id+" does not exist",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Category with id="+id+" does not exist",HttpStatus.BAD_REQUEST);
         }
-        categoryService.deleteCats(id);
+        categoryService.deleteCategory(id);
         return ResponseEntity.ok("All cats with parent id="+id+" successfully deleted");
     }
 

@@ -30,7 +30,7 @@ public class CategoryService {
         return categoryRepository.findById(id).orElse(null);
     }
 
-    public List<CategoryDTO> getAllCatsById(Long id){
+    public List<CategoryDTO> getAllCategoriesById(Long id){
         if (id==null){
             id=1L;
         }
@@ -42,7 +42,7 @@ public class CategoryService {
         return categories;
     }
 
-    public void deleteCats(Long id){
+    public void deleteCategory(Long id){
         categoryRepository.findAllByParentCategory(id).stream()
                                             .map(Category::getId)
                                             .forEach(ids -> categoryRepository.deleteById(ids));

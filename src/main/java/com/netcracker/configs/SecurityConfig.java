@@ -14,7 +14,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
+//TODO add logging with slf4j to file (where can be thrown exceptions)
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -33,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth)  {
             auth.authenticationProvider(authenticationProvider());
         }
 
@@ -70,12 +70,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     //Adding Swagger
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web)  {
         web.ignoring().antMatchers("/v2/api-docs",
                 "/configuration/ui",
                 "/swagger-resources/**",
                 "/configuration/security",
-                "/swagger-ui.html",
+                "/swagger-ui.html/**",
                 "/webjars/**");
     }
 }

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/admin/")
+@RequestMapping(value = "api/admin/")
 public class AdminUserController {
 
     private final UserService userService;
@@ -40,7 +40,7 @@ public class AdminUserController {
         Long id = Long.parseLong(ide);
 
         if(userService.findById(id)==null){
-            return new ResponseEntity<String>("User with id = " + id + " do not exist",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User with id = " + id + " do not exist",HttpStatus.BAD_REQUEST);
         }
         userService.delete(id);
         return ResponseEntity.ok("User with id = "+ id + " successfully deleted");
@@ -53,7 +53,7 @@ public class AdminUserController {
         String pass = passwordChanger.getSecondLine();
 
         if(userService.findById(id)==null){
-            return new ResponseEntity<String>("User with id = "
+            return new ResponseEntity<>("User with id = "
                     +id
                     + " does not exist",HttpStatus.BAD_REQUEST);
         }
@@ -70,7 +70,7 @@ public class AdminUserController {
         String status = statusChanger.getSecondLine();
 
         if(userService.findById(id)==null){
-            return new ResponseEntity<String>("User with id = " + id + " does not exist",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User with id = " + id + " does not exist",HttpStatus.BAD_REQUEST);
         }
         User user = userService.findById(id);
         user.setStatus(Status.valueOf(status));

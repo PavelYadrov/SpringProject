@@ -7,10 +7,7 @@ import com.netcracker.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,22 +25,32 @@ public class UserCategoriesController {
     }
 
 
-    @GetMapping(value = "getCategories")
-    public ResponseEntity<List<CategoryDTO>> getCats(@RequestBody(required = false) String id){
-        if(id!=null && categoryService.findById(Long.parseLong(id))==null){
-            return new ResponseEntity("Category with id="+id+" does not exist",HttpStatus.BAD_REQUEST);
-        }
-        if (id==null) return ResponseEntity.ok(categoryService.getAllCatsById(null));
+    @PostMapping(value = "getCategories")
+    public ResponseEntity<List<CategoryDTO>> getCategoriesById(@RequestBody(required = false) String id){
+        try {
+            if(id!=null && categoryService.findById(Long.parseLong(id))==null){
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            if (id==null) return ResponseEntity.ok(categoryService.getAllCategoriesById(null));
 
-        return ResponseEntity.ok(categoryService.getAllCatsById(Long.parseLong(id)));
+            return ResponseEntity.ok(categoryService.getAllCategoriesById(Long.parseLong(id)));
+        }
+       catch (NumberFormatException e){
+           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+       }
     }
 
-    @GetMapping(value = "getFirstLayerCategories")
-        public ResponseEntity<List<Category>> getFirstLayerCategories(@RequestBody(required = true) String parentId){
-        Long id = Long.parseLong(parentId);
-        if(categoryService.findById(id)==null){
-            return new ResponseEntity("Category with id="+id+" does not exist",HttpStatus.BAD_REQUEST);
+    @PostMapping(value = "getFirstLayerCategories")
+        public ResponseEntity<List<Category>> getFirstLayerCategories(@RequestBody String parentId){
+        try {
+            Long id = Long.parseLong(parentId);
+            if(categoryService.findById(id)==null){
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return ResponseEntity.ok(categoryService.getAllChilds(id));
         }
-        return ResponseEntity.ok(categoryService.getAllChilds(id));
+        catch (NumberFormatException e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

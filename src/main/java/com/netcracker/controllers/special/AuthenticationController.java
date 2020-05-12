@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 @RestController
-@RequestMapping(value = "/api/auth/")
+@RequestMapping(value = "api/auth/")
 public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
@@ -43,20 +43,20 @@ public class AuthenticationController {
 
             User user = userService.findByUsername(username);
             if(user.getStatus()==Status.BANNED){
-                return new ResponseEntity<String>("This account was banned. " +
+                return new ResponseEntity<>("This account was banned. " +
                         "Please contact admin for detail information",HttpStatus.BAD_REQUEST);
             }
             return ResponseEntity.ok("Bearer_"+jwtTokenProvider.createToken(userService.findByUsername(username)));
         }
         catch (AuthenticationException e){
-            return new ResponseEntity<String>("Invalid username or password ",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Invalid username or password ",HttpStatus.BAD_REQUEST);
         }
     }
     @PostMapping("register")
     public ResponseEntity<String> registration(@RequestBody User user){
         String response = userService.isValid(user);
         if(response!=null) {
-            return new ResponseEntity(response,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
             userService.register(user);
         return ResponseEntity.ok("User " + user.getUsername()+ " successfully added");

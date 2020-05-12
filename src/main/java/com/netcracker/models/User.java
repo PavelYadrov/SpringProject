@@ -1,14 +1,18 @@
 package com.netcracker.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.ToString;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.List;
-
+import java.util.Set;
 
 
 @Entity
@@ -31,7 +35,6 @@ public class User {
     private String lastName;
 
     @NonNull
-    @Size(min = 6,max=50)
     private String password;
 
     @NonNull
@@ -41,9 +44,15 @@ public class User {
     private Status status;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(name = "user_roles",
     joinColumns = {@JoinColumn(name="user_id",referencedColumnName = "id")},
     inverseJoinColumns = {@JoinColumn (name = "role_id",referencedColumnName = "id")} )
     private List<Role> roles;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ToString.Exclude
+    private List<Advertisement> advertisementsUser;
 
 }
