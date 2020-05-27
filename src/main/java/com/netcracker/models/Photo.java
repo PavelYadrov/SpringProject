@@ -2,15 +2,13 @@ package com.netcracker.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Data
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Entity
 @Table(name = "photos")
 public class Photo {

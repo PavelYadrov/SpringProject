@@ -1,0 +1,14 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: resource
+
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://user:WannaBeIn3ureka@localhost:8761/eureka/

@@ -25,7 +25,7 @@ public class AdminCategoryController {
     }
 
     @DeleteMapping(value = "deleteCategories")
-    public ResponseEntity<String> getCategories(@RequestBody String ide){
+    public ResponseEntity<String> deleteCategories(@RequestBody String ide){
         Long id = Long.parseLong(ide);
 
         if(categoryService.findById(id)==null){

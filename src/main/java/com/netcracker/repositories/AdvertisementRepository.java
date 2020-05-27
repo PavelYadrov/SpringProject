@@ -4,6 +4,7 @@ import com.netcracker.models.Advertisement;
 import com.netcracker.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface AdvertisementRepository extends JpaRepository<Advertisement,Long> {
@@ -14,7 +15,9 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement,Lon
 
    void deleteAdvertisementByUser_IdAndId(Long user_id, Long id);
 
-   Optional<Advertisement> findAdvertisementByCategory_Id(Long id);
+   List<Advertisement> findAllByCategory_Id(Long id);
+
+   Optional<Advertisement> findAdvertisementByUser_Id(Long id);
 
 
 }

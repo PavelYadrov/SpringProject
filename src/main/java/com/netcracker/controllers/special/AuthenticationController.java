@@ -1,6 +1,7 @@
 package com.netcracker.controllers.special;
 
 import com.netcracker.dto.DTOHelper;
+import com.netcracker.dto.LoginForm;
 import com.netcracker.dto.UserDto;
 import com.netcracker.models.Status;
 import com.netcracker.models.User;
@@ -36,15 +37,15 @@ public class AuthenticationController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<String> login(@RequestBody DTOHelper loginForm){
+    public ResponseEntity<String> login(@RequestBody LoginForm loginForm){
         try{
-            String username = loginForm.getFirstLine();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,loginForm.getSecondLine()));
+            String username = loginForm.getUsername();
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,loginForm.getPassword()));
 
             User user = userService.findByUsername(username);
             if(user.getStatus()==Status.BANNED){
                 return new ResponseEntity<>("This account was banned. " +
-                        "Please contact admin for detail information",HttpStatus.BAD_REQUEST);
+                        "Please contact admin for detail information",HttpStatus.FORBIDDEN);
             }
             return ResponseEntity.ok("Bearer_"+jwtTokenProvider.createToken(userService.findByUsername(username)));
         }

@@ -1,19 +1,26 @@
 package com.netcracker.services;
 
 import com.netcracker.dto.AdvertisementDTO;
+import com.netcracker.dto.ImageDTO;
 import com.netcracker.models.Advertisement;
 import com.netcracker.models.Category;
+import com.netcracker.models.Photo;
 import com.netcracker.repositories.AdvertisementRepository;
 import com.netcracker.repositories.CategoryRepository;
+import com.netcracker.repositories.PhotoRepository;
 import com.netcracker.repositories.UserRepository;
 import com.netcracker.security.jwt.JwtUser;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,14 +35,18 @@ public class AdvertisementService {
     private AdvertisementRepository advertisementRepository;
     private CategoryRepository categoryRepository;
     private UserRepository userRepository;
+    private PhotoRepository photoRepository;
 
     @Autowired
     public AdvertisementService(AdvertisementRepository advertisementRepository,CategoryRepository categoryRepository
-                                ,UserRepository userRepository) {
+                                ,UserRepository userRepository, PhotoRepository photoRepository) {
         this.userRepository=userRepository;
         this.advertisementRepository = advertisementRepository;
         this.categoryRepository = categoryRepository;
+        this.photoRepository=photoRepository;
+
     }
+    //TODO add photos
     public Advertisement toAdvertisement(AdvertisementDTO advertisementDTO){
         Advertisement advertisement = new Advertisement();
 
@@ -61,6 +72,13 @@ public class AdvertisementService {
     public void addAdvertisement(AdvertisementDTO advertisementDTO){
         Advertisement advertisement = toAdvertisement(advertisementDTO);
         advertisementRepository.save(advertisement);
+
+        List<Photo> images = advertisementDTO.getUrls().stream().map(url-> {
+            Photo image = new Photo(url);
+            image.setAdvertisement(advertisement);
+            return image;
+        }).collect(Collectors.toList());
+        images.forEach(photoRepository::save);
     }
     //TODO add upload photos method
     public String userUpdateAdvertisement(AdvertisementDTO advertisementDTO){
@@ -100,15 +118,31 @@ public class AdvertisementService {
     }
 
     //TODO resolve photos problem
+    //TODO resolve query problem
     public List<AdvertisementDTO> getAllAdvertisementsByParentCategory(Long id){
         if(id==null) id=1L;
         List<Category> categories = categoryRepository.findAllByParentCategory(id);
+        List<Advertisement> advertisements = new ArrayList<>();
 
-        return categories.stream()
-                .map(category -> advertisementRepository.findAdvertisementByCategory_Id(category.getId()).orElse(null))
-                .filter(Objects::nonNull)
-                .map(AdvertisementDTO::fromAdvertisement)
-                .collect(Collectors.toList());
+         List<List<Advertisement>> advertisementList= categories.stream()
+                .map(category -> advertisementRepository.findAllByCategory_Id(category.getId())).collect(Collectors.toList());
+
+         advertisementList.stream().filter(advertisements1 ->!advertisements1.isEmpty()).forEach(advertisements::addAll);
+
+         return advertisements.stream().map(AdvertisementDTO::fromAdvertisement).collect(Collectors.toList());
+
+    }
+
+    public String saveImage(ImageDTO image){
+        String name = RandomStringUtils.randomAlphanumeric(20).toUpperCase();
+        try{
+            Files.write(new File("B:\\myNCWORK\\images\\"+name+image.getExtension()).toPath(),image.getValue());
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return name+image.getExtension();
     }
 
 }
