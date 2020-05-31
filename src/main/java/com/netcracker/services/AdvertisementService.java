@@ -1,6 +1,7 @@
 package com.netcracker.services;
 
 import com.netcracker.dto.AdvertisementDTO;
+import com.netcracker.dto.DTOHelper;
 import com.netcracker.dto.ImageDTO;
 import com.netcracker.models.Advertisement;
 import com.netcracker.models.Category;
@@ -17,14 +18,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -119,30 +120,46 @@ public class AdvertisementService {
 
     //TODO resolve photos problem
     //TODO resolve query problem
-    public List<AdvertisementDTO> getAllAdvertisementsByParentCategory(Long id){
-        if(id==null) id=1L;
-        List<Category> categories = categoryRepository.findAllByParentCategory(id);
-        List<Advertisement> advertisements = new ArrayList<>();
+    public List<AdvertisementDTO> getAllAdvertisementsByParentCategory(Long id) {
+        if (id == null) id = 1L;
+        List<Long> ids = categoryRepository.findAllByParentCategory(id).stream().map(Category::getId)
+                .collect(Collectors.toList());
+        List<Advertisement> advertisements = advertisementRepository.findAllByCategory_Ids(ids).stream()
+                .sorted(Comparator.comparing(Advertisement::getDate).reversed()).collect(Collectors.toList());
 
-         List<List<Advertisement>> advertisementList= categories.stream()
-                .map(category -> advertisementRepository.findAllByCategory_Id(category.getId())).collect(Collectors.toList());
-
-         advertisementList.stream().filter(advertisements1 ->!advertisements1.isEmpty()).forEach(advertisements::addAll);
-
-         return advertisements.stream().map(AdvertisementDTO::fromAdvertisement).collect(Collectors.toList());
+        return advertisements.stream().map(AdvertisementDTO::fromAdvertisement).collect(Collectors.toList());
 
     }
 
     public String saveImage(ImageDTO image){
         String name = RandomStringUtils.randomAlphanumeric(20).toUpperCase();
-        try{
-            Files.write(new File("B:\\myNCWORK\\images\\"+name+image.getExtension()).toPath(),image.getValue());
-        }
-        catch (IOException e){
+        try {
+            Files.write(new File("B:\\myNCWORK\\images\\" + name + image.getExtension()).toPath(), image.getValue());
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return name+image.getExtension();
+        return name + image.getExtension();
     }
 
+    public List<AdvertisementDTO> getAllAdvertisementsBySearch(DTOHelper content) {
+        List<AdvertisementDTO> advertisements = getAllAdvertisementsByParentCategory(Long.parseLong(content.getFirstLine()));
+        String[] search = content.getSecondLine().trim().split("\\s");
+
+        return advertisements.stream().sorted((adv1, adv2) -> {
+            if (adv1.getId() == 0 || adv2.getId() == 0) return 0;
+            int count1 = 0;
+            int count2 = 0;
+            for (String word : search) {
+                count1 += StringUtils.countOccurrencesOf(adv1.getName(), word);
+                count1 += StringUtils.countOccurrencesOf(adv1.getDescription(), word);
+
+                count2 += StringUtils.countOccurrencesOf(adv2.getName(), word);
+                count2 += StringUtils.countOccurrencesOf(adv2.getDescription(), word);
+            }
+            if (count1 == 0) adv1.setId(0L);
+            if (count2 == 0) adv2.setId(0L);
+            return count2 - count1;
+        }).filter(advertisementDTO -> advertisementDTO.getId() != 0L).collect(Collectors.toList());
+    }
 }

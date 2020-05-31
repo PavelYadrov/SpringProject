@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,17 +59,42 @@ public class CategoryService {
     }
     private ResponseEntity<String> isValid(Category category){
         if(categoryRepository.findByName(category.getName())!=null){
-            return new ResponseEntity<>("Category with name = "+category.getName()+" already exists",
+            return new ResponseEntity<>("Category with name = " + category.getName() + " already exists",
                     HttpStatus.BAD_REQUEST);
         }
-        if(categoryRepository.findById(category.getParent_id()).orElse(null)==null){
-            return new ResponseEntity<>("Parent category with id = "+category.getId()+" does not exist",
+        if (categoryRepository.findById(category.getParent_id()).orElse(null) == null) {
+            return new ResponseEntity<>("Parent category with id = " + category.getId() + " does not exist",
                     HttpStatus.BAD_REQUEST);
         }
         return null;
     }
 
-    public List<Category> getAllChilds(Long id){
-        return categoryRepository.findAllChilds(id);
+    public List<CategoryDTO> getAllChilds(Long id) {
+        List<Long> ids = categoryRepository.findDistinctByParent_id();
+        List<CategoryDTO> categoryDTOS = categoryRepository.findAllChilds(id)
+                .stream()
+                .map(CategoryDTO::fromCategory)
+                .map(categoryDTO -> {
+                    if (!ids.contains(categoryDTO.getId())) {
+                        categoryDTO.setHasChilds(false);
+                    }
+                    return categoryDTO;
+                }).collect(Collectors.toList());
+
+        return categoryDTOS;
+    }
+
+    public List<Long> getCategoryList(String parentId) {
+        LinkedList<Long> list = new LinkedList<>();
+
+        Long currId = Long.parseLong(parentId);
+        list.addFirst(currId);
+        Long nextId;
+        while (currId != 1) {
+            nextId = categoryRepository.findById(currId).get().getParent_id();
+            list.addFirst(nextId);
+            currId = nextId;
+        }
+        return list;
     }
 }

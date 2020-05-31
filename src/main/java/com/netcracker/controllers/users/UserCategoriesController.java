@@ -1,13 +1,15 @@
 package com.netcracker.controllers.users;
 
 import com.netcracker.dto.CategoryDTO;
-import com.netcracker.models.Category;
 import com.netcracker.services.CategoryService;
 import com.netcracker.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -41,16 +43,20 @@ public class UserCategoriesController {
     }
 
     @PostMapping(value = "getFirstLayerCategories")
-        public ResponseEntity<List<Category>> getFirstLayerCategories(@RequestBody String parentId){
+    public ResponseEntity<List<CategoryDTO>> getFirstLayerCategories(@RequestBody String parentId) {
         try {
             Long id = Long.parseLong(parentId);
-            if(categoryService.findById(id)==null){
+            if (categoryService.findById(id) == null) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
             return ResponseEntity.ok(categoryService.getAllChilds(id));
-        }
-        catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping(value = "getCategoryList")
+    public ResponseEntity<List<Long>> getCategoryList(@RequestBody String parentId) {
+        return ResponseEntity.ok(categoryService.getCategoryList(parentId));
     }
 }

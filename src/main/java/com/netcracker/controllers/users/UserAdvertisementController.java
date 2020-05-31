@@ -1,6 +1,7 @@
 package com.netcracker.controllers.users;
 
 import com.netcracker.dto.AdvertisementDTO;
+import com.netcracker.dto.DTOHelper;
 import com.netcracker.models.Advertisement;
 import com.netcracker.services.AdvertisementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,12 +62,16 @@ public class UserAdvertisementController {
     }
 
     @PostMapping(value = "getAllAdvertisementsByCategory")
-    public ResponseEntity<List<AdvertisementDTO>> getAllAdvertisementsByCategory(@RequestBody String id){
+    public ResponseEntity<List<AdvertisementDTO>> getAllAdvertisementsByCategory(@RequestBody String id) {
         try {
             return ResponseEntity.ok(advertisementService.getAllAdvertisementsByParentCategory(Long.parseLong(id)));
-        }
-        catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping(value = "getAllAdvertisementsBySearch")
+    public ResponseEntity<List<AdvertisementDTO>> getAllAdvertisementsBySearch(@RequestBody DTOHelper helper) {
+        return ResponseEntity.ok(advertisementService.getAllAdvertisementsBySearch(helper));
     }
 }

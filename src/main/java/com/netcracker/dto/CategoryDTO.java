@@ -17,15 +17,17 @@ public class CategoryDTO {
     private String name;
     private String description;
     private Long parent_id;
-    private List<Category> childs;
+    private Boolean hasChilds;
+    private List<CategoryDTO> childs;
 
-    public static CategoryDTO fromCategory(Category category){
+    public static CategoryDTO fromCategory(Category category) {
         CategoryService categoryService;
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setId(category.getId());
         categoryDTO.setName(category.getName());
         categoryDTO.setDescription(category.getDescription());
         categoryDTO.setParent_id(category.getParent_id());
+        categoryDTO.hasChilds = true;
         return categoryDTO;
     }
 }

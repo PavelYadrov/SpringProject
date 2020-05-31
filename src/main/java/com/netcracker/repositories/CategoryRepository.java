@@ -35,4 +35,7 @@ public interface CategoryRepository extends JpaRepository<Category,Long> {
     Category findByName(String name);
 
     Optional<Category> findById(Long id);
+
+    @Query(value = "select distinct ca.parent_id from categories ca ", nativeQuery = true)
+    List<Long> findDistinctByParent_id();
 }
