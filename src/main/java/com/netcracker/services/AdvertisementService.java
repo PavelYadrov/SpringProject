@@ -3,6 +3,7 @@ package com.netcracker.services;
 import com.netcracker.dto.AdvertisementDTO;
 import com.netcracker.dto.DTOHelper;
 import com.netcracker.dto.ImageDTO;
+import com.netcracker.dto.MainPageParams;
 import com.netcracker.models.Advertisement;
 import com.netcracker.models.Category;
 import com.netcracker.models.Photo;
@@ -118,48 +119,80 @@ public class AdvertisementService {
         advertisementRepository.deleteAdvertisementByUser_IdAndId(user.getId(),advertisement_id);
     }
 
-    //TODO resolve photos problem
     //TODO resolve query problem
-    public List<AdvertisementDTO> getAllAdvertisementsByParentCategory(Long id) {
-        if (id == null) id = 1L;
+    public List<AdvertisementDTO> getAllAdvertisementsByParentCategory(DTOHelper params) {
+        Long id = Long.parseLong(params.getFirstLine());
+        Long page = Long.parseLong(params.getSecondLine()) * 10;
+
         List<Long> ids = categoryRepository.findAllByParentCategory(id).stream().map(Category::getId)
                 .collect(Collectors.toList());
-        List<Advertisement> advertisements = advertisementRepository.findAllByCategory_Ids(ids).stream()
-                .sorted(Comparator.comparing(Advertisement::getDate).reversed()).collect(Collectors.toList());
-
-        return advertisements.stream().map(AdvertisementDTO::fromAdvertisement).collect(Collectors.toList());
-
+        return advertisementRepository.findAllByCategory_idAndPage(ids, page - 9, page)
+                .stream()
+                .map(AdvertisementDTO::fromAdvertisement)
+                .collect(Collectors.toList());
     }
 
-    public String saveImage(ImageDTO image){
+    public String saveImage(ImageDTO image) {
         String name = RandomStringUtils.randomAlphanumeric(20).toUpperCase();
         try {
             Files.write(new File("B:\\myNCWORK\\images\\" + name + image.getExtension()).toPath(), image.getValue());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return name + image.getExtension();
     }
 
-    public List<AdvertisementDTO> getAllAdvertisementsBySearch(DTOHelper content) {
-        List<AdvertisementDTO> advertisements = getAllAdvertisementsByParentCategory(Long.parseLong(content.getFirstLine()));
-        String[] search = content.getSecondLine().trim().split("\\s");
+    public List<AdvertisementDTO> getAllAdvertisementsBySearch(MainPageParams params) {
+        Long id = Long.parseLong(params.getCategory_id());
+        Long page = Long.parseLong(params.getPage()) * 10;
+        String[] search = params.getSearch().trim().split("\\s");
+
+        List<AdvertisementDTO> advertisements = findAllAdvs(id, search);
 
         return advertisements.stream().sorted((adv1, adv2) -> {
-            if (adv1.getId() == 0 || adv2.getId() == 0) return 0;
             int count1 = 0;
             int count2 = 0;
             for (String word : search) {
                 count1 += StringUtils.countOccurrencesOf(adv1.getName(), word);
+                count1 += StringUtils.countOccurrencesOf(adv1.getName(), " " + word + " ");
                 count1 += StringUtils.countOccurrencesOf(adv1.getDescription(), word);
+                count1 += StringUtils.countOccurrencesOf(adv1.getDescription(), " " + word + " ");
 
                 count2 += StringUtils.countOccurrencesOf(adv2.getName(), word);
+                count2 += StringUtils.countOccurrencesOf(adv2.getName(), " " + word + " ");
                 count2 += StringUtils.countOccurrencesOf(adv2.getDescription(), word);
+                count2 += StringUtils.countOccurrencesOf(adv2.getDescription(), " " + word + " ");
             }
-            if (count1 == 0) adv1.setId(0L);
-            if (count2 == 0) adv2.setId(0L);
             return count2 - count1;
-        }).filter(advertisementDTO -> advertisementDTO.getId() != 0L).collect(Collectors.toList());
+        }).skip(page - 10).limit(page)
+                .collect(Collectors.toList());
+    }
+
+    public Integer findCountOfAdvertisements(MainPageParams params) {
+        Long id = Long.parseLong(params.getCategory_id());
+        String search = params.getSearch();
+        if (search == null || search.isEmpty()) {
+            return advertisementRepository.findCountByCategory(categoryRepository.findAllByParentCategory(id).stream().map(Category::getId)
+                    .collect(Collectors.toList()));
+        } else {
+            Integer count = findAllAdvs(id, search.split("\\s")).size();
+            return count;
+        }
+    }
+
+    private List<AdvertisementDTO> findAllAdvs(Long id, String[] search) {
+        List<Long> ids = categoryRepository.findAllByParentCategory(id).stream().map(Category::getId)
+                .collect(Collectors.toList());
+        return advertisementRepository.findAllByCategory_Ids(ids).stream()
+                .sorted(Comparator.comparing(Advertisement::getDate).reversed())
+                .map(AdvertisementDTO::fromAdvertisement)
+                .filter(adv -> {
+                    int count = 0;
+                    for (String word : search) {
+                        count += StringUtils.countOccurrencesOf(adv.getName(), word);
+                        count += StringUtils.countOccurrencesOf(adv.getDescription(), word);
+                    }
+                    return count != 0;
+                }).collect(Collectors.toList());
     }
 }

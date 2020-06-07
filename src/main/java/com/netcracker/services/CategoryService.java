@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,16 +86,22 @@ public class CategoryService {
     }
 
     public List<Long> getCategoryList(String parentId) {
-        LinkedList<Long> list = new LinkedList<>();
+        try {
+            LinkedList<Long> list = new LinkedList<>();
 
-        Long currId = Long.parseLong(parentId);
-        list.addFirst(currId);
-        Long nextId;
-        while (currId != 1) {
-            nextId = categoryRepository.findById(currId).get().getParent_id();
-            list.addFirst(nextId);
-            currId = nextId;
+            Long currId = Long.parseLong(parentId);
+            list.addFirst(currId);
+            Long nextId;
+            while (currId != 1) {
+                nextId = categoryRepository.findById(currId).get().getParent_id();
+                list.addFirst(nextId);
+                currId = nextId;
+            }
+            return list;
+        } catch (NoSuchElementException e) {
+            LinkedList<Long> list = new LinkedList<>();
+            list.add(1L);
+            return list;
         }
-        return list;
     }
 }

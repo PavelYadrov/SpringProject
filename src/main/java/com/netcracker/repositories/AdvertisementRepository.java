@@ -24,9 +24,15 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement,Lon
             "order by ad.date desc", nativeQuery = true)
     List<Advertisement> findAllByCategory_Ids(@Param("ids") List<Long> ids);
 
-    /*@Query(value = "select * from advertisements ad \n" +
-            "where ad.name like :words or ad.description like :words ,nativeQuery = true)
-    List<Advertisement> findAllBySearch(@Param("words")String[] words);*/
+
+    @Query(value = "select *\n" +
+            "from (select ad.id,ad.user_id,ad.category_id,ad.name,ad.date,ad.description,ad.price," +
+            "row_number() over(order by date desc) from advertisements ad where ad.category_id in(:id)) as dd\n" +
+            "where dd.row_number between :minP and :maxP", nativeQuery = true)
+    List<Advertisement> findAllByCategory_idAndPage(@Param("id") List<Long> id, @Param("minP") Long pageMin, @Param("maxP") Long pageMax);
+
+    @Query(value = "select count(ad.id) from advertisements ad where ad.category_id in(:ids)", nativeQuery = true)
+    Integer findCountByCategory(@Param("ids") List<Long> ids);
 
 
 }

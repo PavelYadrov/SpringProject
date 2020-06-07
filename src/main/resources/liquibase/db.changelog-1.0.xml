@@ -187,4 +187,14 @@
                                  referencedTableName="users"/>
     </changeSet>
 
+    <changeSet id="1.0.12" author="pavel.yadrov">
+        <addColumn catalogName="spring"
+                   schemaName="public"
+                   tableName="users">
+            <column name="avatar"
+                    position="2"
+                    type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

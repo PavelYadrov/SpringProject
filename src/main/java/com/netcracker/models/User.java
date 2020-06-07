@@ -10,9 +10,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.util.List;
-import java.util.Set;
 
 
 @Entity
@@ -40,14 +38,17 @@ public class User {
     @NonNull
     private String email;
 
+    @NonNull
+    private String avatar;
+
     @Enumerated(EnumType.STRING)
     private Status status;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(name = "user_roles",
-    joinColumns = {@JoinColumn(name="user_id",referencedColumnName = "id")},
-    inverseJoinColumns = {@JoinColumn (name = "role_id",referencedColumnName = "id")} )
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
     private List<Role> roles;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)

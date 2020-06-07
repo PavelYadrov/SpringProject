@@ -2,6 +2,7 @@ package com.netcracker.controllers.users;
 
 import com.netcracker.dto.AdvertisementDTO;
 import com.netcracker.dto.DTOHelper;
+import com.netcracker.dto.MainPageParams;
 import com.netcracker.models.Advertisement;
 import com.netcracker.services.AdvertisementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,22 +57,27 @@ public class UserAdvertisementController {
     }
 
     //TODO check UI part for random access without permission
-    @PatchMapping(value = "updateAdvertisement")
+    @PutMapping(value = "updateAdvertisement")
     public ResponseEntity<String> updateAdvertisement(@RequestBody AdvertisementDTO advertisementDTO) {
         return ResponseEntity.ok(advertisementService.userUpdateAdvertisement(advertisementDTO));
     }
 
     @PostMapping(value = "getAllAdvertisementsByCategory")
-    public ResponseEntity<List<AdvertisementDTO>> getAllAdvertisementsByCategory(@RequestBody String id) {
+    public ResponseEntity<List<AdvertisementDTO>> getAllAdvertisementsByCategory(@RequestBody DTOHelper helper) {
         try {
-            return ResponseEntity.ok(advertisementService.getAllAdvertisementsByParentCategory(Long.parseLong(id)));
+            return ResponseEntity.ok(advertisementService.getAllAdvertisementsByParentCategory(helper));
         } catch (NumberFormatException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping(value = "getAllAdvertisementsBySearch")
-    public ResponseEntity<List<AdvertisementDTO>> getAllAdvertisementsBySearch(@RequestBody DTOHelper helper) {
-        return ResponseEntity.ok(advertisementService.getAllAdvertisementsBySearch(helper));
+    public ResponseEntity<List<AdvertisementDTO>> getAllAdvertisementsBySearch(@RequestBody MainPageParams params) {
+        return ResponseEntity.ok(advertisementService.getAllAdvertisementsBySearch(params));
+    }
+
+    @PostMapping(value = "getAdvertisementsCount")
+    public ResponseEntity<Integer> getAdvertisementsCount(@RequestBody MainPageParams params) {
+        return ResponseEntity.ok(advertisementService.findCountOfAdvertisements(params));
     }
 }

@@ -1,7 +1,6 @@
 package com.netcracker.controllers.admins;
 
 import com.netcracker.dto.AdvertisementDTO;
-import com.netcracker.repositories.AdvertisementRepository;
 import com.netcracker.services.AdvertisementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,15 +22,19 @@ public class AdminAdvertisementController {
     public ResponseEntity<String> deleteAdvertisement(@RequestBody String advertisement_id){
         try{
             advertisementService.deleteAdminAdvertisement(Long.parseLong(advertisement_id));
-        }
-        catch (NumberFormatException e){
-            return new ResponseEntity<>("Invalid "+e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
+        } catch (NumberFormatException e) {
+            return new ResponseEntity<>("Invalid " + e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PatchMapping(value = "updateAdvertisement")
+    @PutMapping(value = "updateAdvertisement")
     public ResponseEntity<String> updateAdvertisement(@RequestBody AdvertisementDTO advertisementDTO) {
         return ResponseEntity.ok(advertisementService.adminUpdateAdvertisement(advertisementDTO));
+    }
+
+    @GetMapping(value = "roleCheck")
+    public ResponseEntity<String> roleCheck() {
+        return ResponseEntity.ok("KO");
     }
 }
