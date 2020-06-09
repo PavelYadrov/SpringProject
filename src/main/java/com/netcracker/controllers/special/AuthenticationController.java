@@ -1,8 +1,7 @@
 package com.netcracker.controllers.special;
 
-import com.netcracker.dto.DTOHelper;
 import com.netcracker.dto.LoginForm;
-import com.netcracker.dto.UserDto;
+import com.netcracker.dto.UserDTO;
 import com.netcracker.models.Status;
 import com.netcracker.models.User;
 import com.netcracker.security.jwt.JwtTokenProvider;
@@ -65,11 +64,11 @@ public class AuthenticationController {
     }
 
     @GetMapping("info")
-    public ResponseEntity<UserDto> info(HttpServletRequest req){
-        UserDto userDto = UserDto.fromUser(userService.findByUsername(
-                                        jwtTokenProvider.getUsername(
-                                                jwtTokenProvider.resolveToken(req)
-                                        )));
+    public ResponseEntity<UserDTO> info(HttpServletRequest req) {
+        UserDTO userDto = UserDTO.fromUser(userService.findByUsername(
+                jwtTokenProvider.getUsername(
+                        jwtTokenProvider.resolveToken(req)
+                )));
         return ResponseEntity.ok(userDto);
     }
 }

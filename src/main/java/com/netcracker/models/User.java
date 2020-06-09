@@ -10,6 +10,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 
@@ -40,6 +41,10 @@ public class User {
 
     @NonNull
     private String avatar;
+
+    @NonNull
+    @Column(name = "registration_date")
+    private Date regDate;
 
     @Enumerated(EnumType.STRING)
     private Status status;

@@ -36,15 +36,12 @@ public class UserAdvertisementController {
         }
     }
 
-    //TODO add Upload Controller
     @PostMapping(value = "addAdvertisement")
     public ResponseEntity<String> addAdvertisement(@RequestBody AdvertisementDTO advertisementDTO) {
         advertisementService.addAdvertisement(advertisementDTO);
         return ResponseEntity.ok("Advertisement successfully added");
     }
 
-    //TODO add message for success or not?
-    //TODO do we need stackTrace for exception?
     @DeleteMapping(value = "deleteAdvertisement")
     public ResponseEntity<String> deleteAdvertisement(@RequestBody String advertisement_id) {
         try{
@@ -79,5 +76,10 @@ public class UserAdvertisementController {
     @PostMapping(value = "getAdvertisementsCount")
     public ResponseEntity<Integer> getAdvertisementsCount(@RequestBody MainPageParams params) {
         return ResponseEntity.ok(advertisementService.findCountOfAdvertisements(params));
+    }
+
+    @PostMapping(value = "getAdvertisementsByUser")
+    public ResponseEntity<List<AdvertisementDTO>> getAllUsersAdvertisements(@RequestBody String id) {
+        return ResponseEntity.ok(advertisementService.getAllAdvertisements(id));
     }
 }

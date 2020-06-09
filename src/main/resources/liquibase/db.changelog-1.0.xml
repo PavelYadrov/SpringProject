@@ -197,4 +197,13 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="1.0.13" author="pavel.yadrov">
+        <addColumn catalogName="spring"
+                   schemaName="public"
+                   tableName="users">
+            <column name="registration_date"
+                    type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

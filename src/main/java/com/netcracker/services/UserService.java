@@ -1,9 +1,10 @@
 package com.netcracker.services;
 
-import com.netcracker.dto.UserDto;
+import com.netcracker.dto.UserDTO;
 import com.netcracker.models.Role;
 import com.netcracker.models.Status;
 import com.netcracker.models.User;
+import com.netcracker.repositories.AdvertisementRepository;
 import com.netcracker.repositories.RoleRepository;
 import com.netcracker.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,17 +22,21 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserService {
 
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
-    private final RoleRepository roleRepository;
+    private RoleRepository roleRepository;
+
+    private AdvertisementRepository advertisementRepository;
 
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository,BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository,
+                       BCryptPasswordEncoder passwordEncoder, AdvertisementRepository advertisementRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.advertisementRepository = advertisementRepository;
     }
     
     public User register(User user){
@@ -41,6 +47,7 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(userRoles);
+        user.setRegDate(new Date());
 
         User registeredUser = userRepository.save(user);
 
@@ -49,9 +56,9 @@ public class UserService {
     }
 
 
-    public List<UserDto> getAll() {
+    public List<UserDTO> getAll() {
         List<User> res = userRepository.findAll();
-        List<UserDto> result = res.stream().map(user -> UserDto.fromUser(user)).collect(Collectors.toList());
+        List<UserDTO> result = res.stream().map(user -> UserDTO.fromUser(user)).collect(Collectors.toList());
         log.info("IN getAll - {} users found", result.size());
         return result;
     }

@@ -34,5 +34,7 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement,Lon
     @Query(value = "select count(ad.id) from advertisements ad where ad.category_id in(:ids)", nativeQuery = true)
     Integer findCountByCategory(@Param("ids") List<Long> ids);
 
+    List<Advertisement> findAllByUser_Id(Long id);
+
 
 }

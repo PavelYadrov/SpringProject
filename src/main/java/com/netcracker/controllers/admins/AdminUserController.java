@@ -1,7 +1,7 @@
 package com.netcracker.controllers.admins;
 
 import com.netcracker.dto.DTOHelper;
-import com.netcracker.dto.UserDto;
+import com.netcracker.dto.UserDTO;
 import com.netcracker.models.Status;
 import com.netcracker.models.User;
 import com.netcracker.repositories.UserRepository;
@@ -30,11 +30,11 @@ public class AdminUserController {
     }
 
     @GetMapping(value = "getAllUsers")
-    public ResponseEntity<List<UserDto>> getAll(){
+    public ResponseEntity<List<UserDTO>> getAll() {
         return ResponseEntity.ok(userService.getAll());
     }
 
-    @DeleteMapping(value = "delete")
+    @DeleteMapping(value = "deleteUser")
     public ResponseEntity<String> delete(@RequestBody(required = true) String ide){
 
         Long id = Long.parseLong(ide);
@@ -64,17 +64,17 @@ public class AdminUserController {
     }
 
     @PutMapping(value = "changeStatus")
-    public ResponseEntity<String> changeStatus(@RequestBody DTOHelper statusChanger){
+    public ResponseEntity<String> changeStatus(@RequestBody DTOHelper statusChanger) {
 
-        Long id =Long.parseLong(statusChanger.getFirstLine());
-        String status = statusChanger.getSecondLine();
+        Long id = Long.parseLong(statusChanger.getFirstLine());
+        String status = statusChanger.getSecondLine().toUpperCase();
 
-        if(userService.findById(id)==null){
-            return new ResponseEntity<>("User with id = " + id + " does not exist",HttpStatus.BAD_REQUEST);
+        if (userService.findById(id) == null) {
+            return new ResponseEntity<>("User with id = " + id + " does not exist", HttpStatus.BAD_REQUEST);
         }
         User user = userService.findById(id);
         user.setStatus(Status.valueOf(status));
         userRepository.save(user);
-        return ResponseEntity.ok("User status : "+user.getUsername()+ " successfully changed");
+        return ResponseEntity.ok("User status : " + user.getUsername() + " successfully changed");
     }
 }

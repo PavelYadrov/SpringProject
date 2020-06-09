@@ -145,27 +145,28 @@ public class AdvertisementService {
     public List<AdvertisementDTO> getAllAdvertisementsBySearch(MainPageParams params) {
         Long id = Long.parseLong(params.getCategory_id());
         Long page = Long.parseLong(params.getPage()) * 10;
-        String[] search = params.getSearch().trim().split("\\s");
-
+        String[] search = params.getSearch().toLowerCase().trim().split("\\s");
         List<AdvertisementDTO> advertisements = findAllAdvs(id, search);
 
         return advertisements.stream().sorted((adv1, adv2) -> {
             int count1 = 0;
             int count2 = 0;
             for (String word : search) {
-                count1 += StringUtils.countOccurrencesOf(adv1.getName(), word);
-                count1 += StringUtils.countOccurrencesOf(adv1.getName(), " " + word + " ");
-                count1 += StringUtils.countOccurrencesOf(adv1.getDescription(), word);
-                count1 += StringUtils.countOccurrencesOf(adv1.getDescription(), " " + word + " ");
+                count1 = getCount(adv1, count1, word);
 
-                count2 += StringUtils.countOccurrencesOf(adv2.getName(), word);
-                count2 += StringUtils.countOccurrencesOf(adv2.getName(), " " + word + " ");
-                count2 += StringUtils.countOccurrencesOf(adv2.getDescription(), word);
-                count2 += StringUtils.countOccurrencesOf(adv2.getDescription(), " " + word + " ");
+                count2 = getCount(adv2, count2, word);
             }
             return count2 - count1;
         }).skip(page - 10).limit(page)
                 .collect(Collectors.toList());
+    }
+
+    private int getCount(AdvertisementDTO adv, int count, String word) {
+        count += StringUtils.countOccurrencesOf(adv.getName().toLowerCase(), word);
+        count += StringUtils.countOccurrencesOf(adv.getName().toLowerCase(), " " + word + " ");
+        count += StringUtils.countOccurrencesOf(adv.getDescription().toLowerCase(), word);
+        count += StringUtils.countOccurrencesOf(adv.getDescription().toLowerCase(), " " + word + " ");
+        return count;
     }
 
     public Integer findCountOfAdvertisements(MainPageParams params) {
@@ -175,7 +176,7 @@ public class AdvertisementService {
             return advertisementRepository.findCountByCategory(categoryRepository.findAllByParentCategory(id).stream().map(Category::getId)
                     .collect(Collectors.toList()));
         } else {
-            Integer count = findAllAdvs(id, search.split("\\s")).size();
+            Integer count = findAllAdvs(id, search.toLowerCase().split("\\s")).size();
             return count;
         }
     }
@@ -189,10 +190,17 @@ public class AdvertisementService {
                 .filter(adv -> {
                     int count = 0;
                     for (String word : search) {
-                        count += StringUtils.countOccurrencesOf(adv.getName(), word);
-                        count += StringUtils.countOccurrencesOf(adv.getDescription(), word);
+                        count += StringUtils.countOccurrencesOf(adv.getName().toLowerCase(), word);
+                        count += StringUtils.countOccurrencesOf(adv.getDescription().toLowerCase(), word);
                     }
                     return count != 0;
                 }).collect(Collectors.toList());
+    }
+
+    public List<AdvertisementDTO> getAllAdvertisements(String id) {
+        return advertisementRepository.findAllByUser_Id(Long.parseLong(id))
+                .stream()
+                .map(AdvertisementDTO::fromAdvertisement)
+                .collect(Collectors.toList());
     }
 }
