@@ -51,14 +51,30 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
+    @JsonIgnore
+    @ToString.Exclude
     @JoinTable(name = "user_roles",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
     private List<Role> roles;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     @ToString.Exclude
     private List<Advertisement> advertisementsUser;
+
+    @OneToMany
+    @JsonIgnore
+    @ToString.Exclude
+    private List<Message> messages;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
+    @JsonIgnore
+    @ToString.Exclude
+    @JoinTable(name = "user_rooms",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "room_id", referencedColumnName = "id")})
+    private List<Room> rooms;
 
 }

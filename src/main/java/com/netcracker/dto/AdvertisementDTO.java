@@ -1,18 +1,11 @@
 package com.netcracker.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.netcracker.models.Advertisement;
 import com.netcracker.models.User;
-import com.netcracker.repositories.CategoryRepository;
-import com.netcracker.repositories.UserRepository;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.NumberFormat;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +33,9 @@ public class AdvertisementDTO {
 
     private List<String> urls;
 
-    public static AdvertisementDTO fromAdvertisement(Advertisement advertisement){
+    private String avatar;
+
+    public static AdvertisementDTO fromAdvertisement(Advertisement advertisement) {
         AdvertisementDTO advertisementDTO = new AdvertisementDTO();
         User user = advertisement.getUser();
         List<String> urls = new ArrayList<>();
@@ -56,6 +51,7 @@ public class AdvertisementDTO {
         advertisementDTO.setCategory_id(advertisement.getCategory().getId());
         advertisementDTO.setUrls(urls);
         advertisementDTO.setDate(advertisement.getDate());
+        advertisementDTO.setAvatar(user.getAvatar());
 
         return advertisementDTO;
     }

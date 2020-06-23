@@ -4,11 +4,12 @@ import com.netcracker.dto.UserDTO;
 import com.netcracker.models.Role;
 import com.netcracker.models.Status;
 import com.netcracker.models.User;
-import com.netcracker.repositories.AdvertisementRepository;
-import com.netcracker.repositories.RoleRepository;
-import com.netcracker.repositories.UserRepository;
+import com.netcracker.repositories.*;
+import com.netcracker.security.jwt.JwtUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserService {
 
+    private MessageRepository messageRepository;
+
+    private RoomRepository roomRepository;
+
     private UserRepository userRepository;
 
     private RoleRepository roleRepository;
@@ -32,11 +37,14 @@ public class UserService {
 
     @Autowired
     public UserService(UserRepository userRepository, RoleRepository roleRepository,
-                       BCryptPasswordEncoder passwordEncoder, AdvertisementRepository advertisementRepository) {
+                       BCryptPasswordEncoder passwordEncoder, AdvertisementRepository advertisementRepository,
+                       MessageRepository messageRepository, RoomRepository roomRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.advertisementRepository = advertisementRepository;
+        this.messageRepository = messageRepository;
+        this.roomRepository = roomRepository;
     }
     
     public User register(User user){
@@ -95,15 +103,20 @@ public class UserService {
                     " Already exist";
         }
         if(userRepository.findByEmail(user.getEmail())!=null){
-            return "User with email: "+ user.getEmail()+
+            return "User with email: " + user.getEmail() +
                     " Already exist";
         }
         return null;
     }
 
-    public void changePassword(User user, String password){
+    public void changePassword(User user, String password) {
         user.setPassword(passwordEncoder.encode(password));
     }
 
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        JwtUser user = (JwtUser) authentication.getPrincipal();
+        return userRepository.findById(user.getId()).get();
+    }
 
 }

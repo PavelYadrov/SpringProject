@@ -1,5 +1,6 @@
 package com.netcracker.security.jwt;
 
+import com.netcracker.models.Status;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
@@ -25,11 +26,12 @@ public class JwtTokenFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
 
-        if (token!=null && jwtTokenProvider.validateToken(token)){
+        if (token != null && jwtTokenProvider.validateToken(token)) {
             Authentication authentication = jwtTokenProvider.getAuthentication(token);
-                if (authentication != null ){
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
+            JwtUser user = (JwtUser) authentication.getPrincipal();
+            if (authentication != null && user.getStatus().equals(Status.ACTIVE)) {
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
         chain.doFilter(request,response);
     }

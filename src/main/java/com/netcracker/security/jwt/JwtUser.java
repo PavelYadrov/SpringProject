@@ -1,5 +1,6 @@
 package com.netcracker.security.jwt;
 
+import com.netcracker.models.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,15 +14,15 @@ import java.util.Collection;
 @NoArgsConstructor
 public class JwtUser implements UserDetails {
 
-    private  Long id;
-    private  String username;
-    private  String firstName;
-    private  String lastName;
-    private  String password;
-    private  String email;
-    private  boolean enabled;
-    private  Collection<? extends GrantedAuthority> authorities;
-
+    private Long id;
+    private String username;
+    private String firstName;
+    private String lastName;
+    private String password;
+    private String email;
+    private Status status;
+    private boolean enabled;
+    private Collection<? extends GrantedAuthority> authorities;
 
     @Override
     public boolean isAccountNonExpired() {
