@@ -1,9 +1,7 @@
 package com.netcracker.controllers.admins;
 
-import com.netcracker.models.Category;
-import com.netcracker.repositories.UserRepository;
+import com.netcracker.dto.CategoryDTO;
 import com.netcracker.services.CategoryService;
-import com.netcracker.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,30 +11,28 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "api/admin/")
 public class AdminCategoryController {
 
-    private final UserService userService;
     private final CategoryService categoryService;
-    private final UserRepository userRepository;
+
 
     @Autowired
-    public AdminCategoryController(UserService userService, UserRepository userRepository, CategoryService categoryService) {
-        this.userService = userService;
-        this.userRepository=userRepository;
+    public AdminCategoryController(CategoryService categoryService) {
+
         this.categoryService = categoryService;
     }
 
-    @DeleteMapping(value = "deleteCategories")
-    public ResponseEntity<String> deleteCategories(@RequestBody String ide){
-        Long id = Long.parseLong(ide);
+    @DeleteMapping(value = "deleteCategory")
+    public ResponseEntity<String> deleteCategory(@RequestBody String categoryId) {
+        Long id = Long.parseLong(categoryId);
 
-        if(categoryService.findById(id)==null){
-            return new ResponseEntity<>("Category with id="+id+" does not exist",HttpStatus.BAD_REQUEST);
+        if (categoryService.findById(id) == null) {
+            return new ResponseEntity<>("Category with id=" + id + " does not exist", HttpStatus.BAD_REQUEST);
         }
         categoryService.deleteCategory(id);
-        return ResponseEntity.ok("All cats with parent id="+id+" successfully deleted");
+        return ResponseEntity.ok("All cats with parent id=" + id + " successfully deleted");
     }
 
     @PostMapping(value = "addCategory")
-    public ResponseEntity<String> addCategory(@RequestBody Category category){
+    public ResponseEntity<String> addCategory(@RequestBody CategoryDTO category) {
         return categoryService.addCategory(category);
     }
 

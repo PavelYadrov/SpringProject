@@ -2,7 +2,6 @@ package com.netcracker.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.netcracker.models.Category;
-import com.netcracker.services.CategoryService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,7 +20,6 @@ public class CategoryDTO {
     private List<CategoryDTO> childs;
 
     public static CategoryDTO fromCategory(Category category) {
-        CategoryService categoryService;
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setId(category.getId());
         categoryDTO.setName(category.getName());
@@ -29,5 +27,13 @@ public class CategoryDTO {
         categoryDTO.setParent_id(category.getParent_id());
         categoryDTO.hasChilds = true;
         return categoryDTO;
+    }
+
+    public Category toCategory(CategoryDTO categoryDTO) {
+        Category category = new Category();
+        category.setParent_id(categoryDTO.getParent_id());
+        category.setDescription(categoryDTO.getDescription());
+        category.setName(categoryDTO.getName());
+        return category;
     }
 }

@@ -26,7 +26,7 @@ public class JwtTokenProvider {
 
     @Value("${jwt.token.secret}")
     private String secret;
-    @Value("${jwt.token.expired}")
+    @Value("${jwt.token.expire}")
     private long validityInMilliseconds;
 
     @Autowired
@@ -84,7 +84,6 @@ public class JwtTokenProvider {
 
             return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
-            //TODO add log
             return false;
         }
     }
@@ -92,9 +91,7 @@ public class JwtTokenProvider {
     private List<String> getRoleNames(List<Role> userRoles) {
         List<String> result = new ArrayList<>();
 
-        userRoles.forEach(role -> {
-            result.add(role.getName());
-        });
+        userRoles.forEach(role -> result.add(role.getName()));
 
         return result;
     }

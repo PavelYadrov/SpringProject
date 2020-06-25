@@ -2,9 +2,31 @@ server:
   port: 8090
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: resource
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/spring
+    username: postgres
+    password: 12345
+    driverClassName: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:liquibase/db.changelog-master.xml
+    url: jdbc:postgresql://localhost:5432/spring
+    user: postgres
+    password: 12345
 
+jwt:
+  token:
+    secret: mysecretword
+    expire: 86400000
 
 eureka:
   client:
