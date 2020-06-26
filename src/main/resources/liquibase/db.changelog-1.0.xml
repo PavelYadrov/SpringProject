@@ -291,6 +291,7 @@
                                  referencedColumnNames="id"
                                  referencedTableName="rooms"/>
     </changeSet>
+
     <changeSet id="1.1.9" author="pavel.yadrov">
         <addColumn catalogName="spring"
                    schemaName="public"
@@ -300,4 +301,55 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="1.1.10" author="pavel.yadrov">
+        <insert catalogName="spring"
+                schemaName="public"
+                tableName="categories">
+            <column name="di" value="1"/>
+            <column name="name" value="All"/>
+            <column name="description" value="think about it"/>
+            <column name="parent_id" value="0"/>
+        </insert>
+
+        <insert catalogName="spring"
+                schemaName="public"
+                tableName="roles">
+            <column name="id" value="1"/>
+            <column name="name" value="ROLE_USER"/>
+        </insert>
+
+        <insert catalogName="spring"
+                schemaName="public"
+                tableName="roles">
+            <column name="id" value="2"/>
+            <column name="name" value="ROLE_ADMIN"/>
+        </insert>
+
+        <insert catalogName="spring"
+                schemaName="public"
+                tableName="users">
+            <column name="id" value="1"/>
+            <column name="username" value="Admin"/>
+            <column name="first_name" value="Admin"/>
+            <column name="last_name" value="Account"/>
+            <column name="email" value="admin@gmail.com"/>
+            <column name="password" value="admin"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="avatar" value="no-avatar.png"/>
+            <column name="registration_date" value="2020-01-01 01:01:01"/>
+        </insert>
+
+        <insert catalogName="spring"
+                schemaName="public"
+                tableName="user_roles">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="1"/>
+        </insert>
+        <insert catalogName="spring"
+                schemaName="public"
+                tableName="user_roles">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="2"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>
