@@ -305,6 +305,7 @@
         <insert catalogName="spring"
                 schemaName="public"
                 tableName="categories">
+            <column name="id" value="1"/>
             <column name="name" value="All"/>
             <column name="description" value="think about it"/>
             <column name="parent_id" value="0"/>

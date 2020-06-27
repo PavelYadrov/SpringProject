@@ -14,6 +14,7 @@ import com.netcracker.repositories.UserRepository;
 import com.netcracker.security.jwt.JwtUser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,8 +22,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Comparator;
 import java.util.Date;
@@ -134,12 +139,23 @@ public class AdvertisementService {
 
     public String saveImage(ImageDTO image) {
         String name = RandomStringUtils.randomAlphanumeric(20).toUpperCase();
-        try {
-            Files.write(new File("B:\\myNCWORK\\images\\" + name + image.getExtension()).toPath(), image.getValue());
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (SystemUtils.IS_OS_LINUX) {
+            try {
+                InputStream in = new ByteArrayInputStream(image.getValue());
+                BufferedImage bufferedImage = ImageIO.read(in);
+                ImageIO.write(bufferedImage, image.getExtension(), new File("/images/" + name + image.getExtension()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                Files.write(new File("B:\\myNCWORK\\images\\" + name + image.getExtension()).toPath(), image.getValue());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return name + image.getExtension();
+
     }
 
     public List<AdvertisementDTO> getAllAdvertisementsBySearch(MainPageParams params) {
