@@ -139,8 +139,13 @@ public class AdvertisementService {
 
     public String saveImage(ImageDTO image) {
         String name = RandomStringUtils.randomAlphanumeric(20).toUpperCase();
-        if (SystemUtils.IS_OS_LINUX) {
+        if (!SystemUtils.IS_OS_WINDOWS) {
             try {
+                try {
+                    Files.write(new File("B:\\myNCWORK\\images\\" + name + image.getExtension()).toPath(), image.getValue());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 InputStream in = new ByteArrayInputStream(image.getValue());
                 BufferedImage bufferedImage = ImageIO.read(in);
                 ImageIO.write(bufferedImage, image.getExtension(), new File("/images/" + name + image.getExtension()));
