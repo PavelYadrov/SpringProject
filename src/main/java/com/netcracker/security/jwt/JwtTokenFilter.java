@@ -3,6 +3,7 @@ package com.netcracker.security.jwt;
 import com.netcracker.models.Status;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -27,10 +28,14 @@ public class JwtTokenFilter extends GenericFilterBean {
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
 
         if (token != null && jwtTokenProvider.validateToken(token)) {
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
-            JwtUser user = (JwtUser) authentication.getPrincipal();
-            if (authentication != null && user.getStatus().equals(Status.ACTIVE)) {
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            try {
+                Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                JwtUser user = (JwtUser) authentication.getPrincipal();
+                if (authentication != null && user.getStatus().equals(Status.ACTIVE)) {
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } catch (UsernameNotFoundException e) {
+                e.getMessage();
             }
         }
         chain.doFilter(request,response);

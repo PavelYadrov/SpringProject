@@ -302,23 +302,23 @@
     </changeSet>
 
     <changeSet id="1.1.10" author="pavel.yadrov">
-        <insert catalogName="spring"
+      <!--  <insert catalogName="spring"
                 schemaName="public"
                 tableName="categories">
             <column name="name" value="All"/>
             <column name="description" value="think about it"/>
             <column name="parent_id" value="0"/>
-        </insert>
+        </insert>-->
 
         <insert catalogName="spring"
                 schemaName="public"
                 tableName="users">
-            <column name="id" value="1"/>
-            <column name="username" value="Admin"/>
+            <column name="id" value="24"/>
+            <column name="username" value="Administrator"/>
             <column name="first_name" value="Admin"/>
             <column name="last_name" value="Account"/>
             <column name="email" value="admin@gmail.com"/>
-            <column name="password" value="admin"/>
+            <column name="password" value="$2y$12$eAqftZ4o6B3BX.TMwf6f0eAaTWyxYbSQYpeLm6fG3/Y3qgAVUAoo6"/>
             <column name="status" value="ACTIVE"/>
             <column name="avatar" value="no-avatar.png"/>
             <column name="registration_date" value="2020-01-01 01:01:01"/>
@@ -327,13 +327,13 @@
         <insert catalogName="spring"
                 schemaName="public"
                 tableName="user_roles">
-            <column name="user_id" value="1"/>
+            <column name="user_id" value="24"/>
             <column name="role_id" value="1"/>
         </insert>
         <insert catalogName="spring"
                 schemaName="public"
                 tableName="user_roles">
-            <column name="user_id" value="1"/>
+            <column name="user_id" value="24"/>
             <column name="role_id" value="2"/>
         </insert>
     </changeSet>
