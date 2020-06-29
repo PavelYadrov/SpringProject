@@ -10,4 +10,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findAllByRoom_IdOrderByMessageDate(Long id);
 
     Message findFirstByRoom_IdOrderByMessageDateDesc(Long id);
+
+    void deleteAllByRoomIdIsIn(List<Long> ids);
 }

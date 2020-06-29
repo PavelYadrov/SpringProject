@@ -63,12 +63,12 @@ public class User {
     @ToString.Exclude
     private List<Advertisement> advertisementsUser;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     @ToString.Exclude
     private List<Message> messages;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Fetch(value = FetchMode.SUBSELECT)
     @JsonIgnore
     @ToString.Exclude

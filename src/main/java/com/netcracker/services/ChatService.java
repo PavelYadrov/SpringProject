@@ -195,4 +195,11 @@ public class ChatService {
         }
     }
 
+    public void setMessageRead(String id) {
+        Long mess_id = Long.parseLong(id);
+        Message message = messageRepository.findById(mess_id).get();
+        message.setRead(true);
+        messageRepository.saveAndFlush(message);
+    }
+
 }

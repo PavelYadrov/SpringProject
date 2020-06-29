@@ -71,13 +71,11 @@ public class UserService {
         return result;
     }
 
-
     public User findByUsername(String username) {
         User result = userRepository.findByUsername(username);
         log.info("IN findByUsername - user: {} found by username: {}", result, username);
         return result;
     }
-
 
     public User findById(Long id) {
         User result = userRepository.findById(id).orElse(null);
@@ -91,18 +89,29 @@ public class UserService {
         return result;
     }
 
-
     public void delete(Long id) {
-        userRepository.deleteById(id);
-        log.info("IN delete - user with id: {} successfully deleted");
+        User user = userRepository.findById(id).get();
+        List<Long> ids = roomRepository.findAllByUserId(id);
+        userRepository.delete(user);
+        deleteUserRooms(ids);
+        log.info("IN delete - user with id: {} successfully deleted", user);
     }
 
-    public String isValid(User user){
-        if(userRepository.findByUsername(user.getUsername())!=null){
-            return "User with username: "+ user.getUsername()+
+    public void deleteUserRooms(List<Long> ids) {
+        try {
+            roomRepository.deleteAllByIds(ids);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public String isValid(User user) {
+        if (userRepository.findByUsername(user.getUsername()) != null) {
+            return "User with username: " + user.getUsername() +
                     " Already exist";
         }
-        if(userRepository.findByEmail(user.getEmail())!=null){
+        if (userRepository.findByEmail(user.getEmail()) != null) {
             return "User with email: " + user.getEmail() +
                     " Already exist";
         }

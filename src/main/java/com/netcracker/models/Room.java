@@ -21,7 +21,7 @@ public class Room {
     @Column(name = "last_update")
     private Date lastUpdate;
 
-    @OneToMany
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private List<Message> messages;

@@ -46,4 +46,10 @@ public class UserChatController {
         return ResponseEntity.ok(chatService.findRoomById(id));
     }
 
+    @PostMapping("setRead")
+    public ResponseEntity<String> setRead(@RequestBody String id) {
+        chatService.setMessageRead(id);
+        return ResponseEntity.ok("Read set");
+    }
+
 }

@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//TODO add logging with slf4j to file (where can be thrown exceptions)
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -68,7 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .apply(new JwtConfigurer(jwtTokenProvider));
     }
 
-    //Adding Swagger
     @Override
     public void configure(WebSecurity web)  {
         web.ignoring().antMatchers("/v2/api-docs",
