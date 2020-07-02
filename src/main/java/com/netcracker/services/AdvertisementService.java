@@ -22,12 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Comparator;
 import java.util.Date;
@@ -128,11 +124,8 @@ public class AdvertisementService {
         String name = RandomStringUtils.randomAlphanumeric(20).toUpperCase();
         if (!SystemUtils.IS_OS_WINDOWS) {
             try {
-                InputStream in = new ByteArrayInputStream(image.getValue());
-                BufferedImage bufferedImage = ImageIO.read(in);
-                File file = new File("/images/" + name + image.getExtension());
-                file.createNewFile();
-                ImageIO.write(bufferedImage, image.getExtension(), file);
+                Files.createFile(new File("/images/" + name + image.getExtension()).toPath());
+                Files.write(new File("/images/" + name + image.getExtension()).toPath(), image.getValue());
             } catch (IOException e) {
                 e.printStackTrace();
             }
