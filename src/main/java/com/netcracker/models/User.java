@@ -1,6 +1,5 @@
 package com.netcracker.models;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,6 @@ import org.hibernate.annotations.FetchMode;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-
 
 @Entity
 @Table(name = "users")

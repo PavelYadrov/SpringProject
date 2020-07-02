@@ -53,7 +53,6 @@ public class UserAdvertisementController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //TODO check UI part for random access without permission
     @PutMapping(value = "updateAdvertisement")
     public ResponseEntity<String> updateAdvertisement(@RequestBody AdvertisementDTO advertisementDTO) {
         return ResponseEntity.ok(advertisementService.userUpdateAdvertisement(advertisementDTO));

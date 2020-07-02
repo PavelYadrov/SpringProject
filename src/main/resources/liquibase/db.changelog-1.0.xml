@@ -301,7 +301,7 @@
         </addColumn>
     </changeSet>
 
-   <changeSet id="1.1.10" author="pavel.yadrov">
+    <!--<changeSet id="1.1.10" author="pavel.yadrov">
        <insert catalogName="spring"
                schemaName="public"
                tableName="categories">
@@ -337,5 +337,5 @@
             <column name="user_id" value="1"/>
             <column name="role_id" value="2"/>
         </insert>
-    </changeSet>
+    </changeSet>-->
 </databaseChangeLog>

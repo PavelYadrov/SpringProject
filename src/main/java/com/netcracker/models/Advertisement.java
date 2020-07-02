@@ -1,16 +1,11 @@
 package com.netcracker.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-
-//TODO add name
 
 @Data
 @NoArgsConstructor

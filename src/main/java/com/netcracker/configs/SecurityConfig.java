@@ -6,6 +6,7 @@ import com.netcracker.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,9 +22,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider, JwtUserDetailService jwtUserDetailService){
-        this.jwtTokenProvider=jwtTokenProvider;
-        this.jwtUserDetailService= jwtUserDetailService;
+    public SecurityConfig(@Lazy JwtTokenProvider jwtTokenProvider, @Lazy JwtUserDetailService jwtUserDetailService) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.jwtUserDetailService = jwtUserDetailService;
     }
 
     @Bean

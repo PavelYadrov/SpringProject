@@ -25,22 +25,22 @@ public class AdminUserController {
     @Autowired
     public AdminUserController(UserService userService, UserRepository userRepository, CategoryService categoryService) {
         this.userService = userService;
-        this.userRepository=userRepository;
+        this.userRepository = userRepository;
         this.categoryService = categoryService;
     }
 
-    @GetMapping(value = "getAllUsers")
-    public ResponseEntity<List<UserDTO>> getAll() {
-        return ResponseEntity.ok(userService.getAll());
+    @PostMapping(value = "getAllUsers")
+    public ResponseEntity<List<UserDTO>> getAll(@RequestBody(required = false) String username) {
+        return ResponseEntity.ok(userService.getAll(username));
     }
 
     @DeleteMapping(value = "deleteUser")
-    public ResponseEntity<String> delete(@RequestBody(required = true) String ide){
+    public ResponseEntity<String> delete(@RequestBody(required = true) String ide) {
 
         Long id = Long.parseLong(ide);
 
-        if(userService.findById(id)==null){
-            return new ResponseEntity<>("User with id = " + id + " do not exist",HttpStatus.BAD_REQUEST);
+        if (userService.findById(id) == null) {
+            return new ResponseEntity<>("User with id = " + id + " do not exist", HttpStatus.BAD_REQUEST);
         }
         userService.delete(id);
         return ResponseEntity.ok("User with id = "+ id + " successfully deleted");

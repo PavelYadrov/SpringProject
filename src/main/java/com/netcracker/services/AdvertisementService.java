@@ -130,7 +130,9 @@ public class AdvertisementService {
             try {
                 InputStream in = new ByteArrayInputStream(image.getValue());
                 BufferedImage bufferedImage = ImageIO.read(in);
-                ImageIO.write(bufferedImage, image.getExtension(), new File("/images/" + name + image.getExtension()));
+                File file = new File("/images/" + name + image.getExtension());
+                file.createNewFile();
+                ImageIO.write(bufferedImage, image.getExtension(), file);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -159,7 +161,7 @@ public class AdvertisementService {
                 count2 = getCount(adv2, count2, word);
             }
             return count2 - count1;
-        }).skip(page - 6).limit(page)
+        }).skip(page - 6).limit(6)
                 .collect(Collectors.toList());
     }
     private int getCount(AdvertisementDTO adv, int count, String word) {

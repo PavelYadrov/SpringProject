@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,9 +65,17 @@ public class UserService {
     }
 
 
-    public List<UserDTO> getAll() {
+    public List<UserDTO> getAll(String username) {
         List<User> res = userRepository.findAll();
-        List<UserDTO> result = res.stream().map(user -> UserDTO.fromUser(user)).collect(Collectors.toList());
+        List<UserDTO> result;
+        if (username == null || username.isEmpty()) {
+            result = res.stream().map(UserDTO::fromUser).collect(Collectors.toList());
+        } else {
+            result = res.stream()
+                    .filter(user -> StringUtils.countOccurrencesOf(user.getUsername().toLowerCase(), username.toLowerCase()) > 0)
+                    .map(UserDTO::fromUser)
+                    .collect(Collectors.toList());
+        }
         log.info("IN getAll - {} users found", result.size());
         return result;
     }
