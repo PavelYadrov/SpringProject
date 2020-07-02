@@ -1,5 +1,6 @@
 server:
   port: 8090
+  image-url: 34.90.134.11:8090/images/
 
 spring:
   main:
